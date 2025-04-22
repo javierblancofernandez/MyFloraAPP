@@ -93,9 +93,13 @@ class PlantaViewModel:ViewModel() {
             return
         }
         // Validación básica currentFormState.description.length < 10 ||
-        if (currentFormState.name.length < 2 || currentFormState.species.length < 2 ||
+        /*if (currentFormState.name.length < 2 || currentFormState.species.length < 2 ||
              !isValidUrl(currentFormState.image)) {
             onError("Por favor, completa todos los campos correctamente")
+            return
+        }*/
+        if (currentFormState.wateringFrequency.equals(0)||currentFormState.fertilizingFrequency.equals(0)) {
+            onError("El campo riego y abonado tienen que tener un número distinto de 0")
             return
         }
 

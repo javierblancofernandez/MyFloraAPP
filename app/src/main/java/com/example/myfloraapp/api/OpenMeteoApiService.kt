@@ -9,7 +9,7 @@ interface OpenMeteoApiService {
     suspend fun getWeather(
         @Query("latitude") lat: Double,
         @Query("longitude") lon: Double,
-        @Query("current") currentParams: String = "temperature_2m,apparent_temperature,relative_humidity_2m,weather_code,uv_index",
+        @Query("current") currentParams: String = "wind_speed_10m,precipitation,temperature_2m,apparent_temperature,relative_humidity_2m,weather_code,uv_index",
         @Query("daily") dailyParams: String = "uv_index_max", // Opcional
         @Query("timezone") timezone: String = "auto"
     ): WeatherResponse

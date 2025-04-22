@@ -24,7 +24,8 @@ fun NavegacionInferior (
     val navigation_item = listOf(
         Pantalla1,
         Pantalla2,
-        Pantalla3
+        Pantalla3,
+        Pantalla4
     )
 
     BottomAppBar(){

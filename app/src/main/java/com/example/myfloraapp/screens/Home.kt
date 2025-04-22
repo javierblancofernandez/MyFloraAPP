@@ -80,10 +80,11 @@ fun Home(
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Spacer(modifier = Modifier.size(10.dp))
+
         WeatherCard(
             weatherData = weatherData,
             modifier = Modifier.fillMaxWidth(),
-            locationName = "Madrid"
+            locationName = province
         )
     }
 

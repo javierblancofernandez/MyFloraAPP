@@ -1,6 +1,7 @@
 package com.example.myfloraapp.components
 
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -19,6 +20,7 @@ import androidx.compose.material.icons.filled.DeviceUnknown
 import androidx.compose.material.icons.filled.ElectricBolt
 import androidx.compose.material.icons.filled.Grain
 import androidx.compose.material.icons.filled.Thunderstorm
+import androidx.compose.material.icons.filled.Umbrella
 import androidx.compose.material.icons.filled.WbCloudy
 import androidx.compose.material.icons.filled.WbSunny
 import androidx.compose.material.icons.outlined.WbSunny
@@ -41,7 +43,11 @@ import androidx.compose.ui.unit.sp
 import com.example.myfloraapp.models.WeatherResponse
 import java.text.ParseException
 import java.text.SimpleDateFormat
+import java.time.LocalDateTime
 import java.util.Locale
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
+
 
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -154,7 +160,6 @@ fun WeatherCard (
             Spacer(modifier = Modifier.height(24.dp))
 
             // Datos adicionales (Grid)
-            // Datos adicionales (Grid)
             GridHorizontal(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
@@ -191,6 +196,7 @@ fun String.formatOpenMeteoDate(): String {
     } catch (e: Exception) {
         "Hoy"
     }
+
 }
 
 fun String.formatOpenMeteoDateLegacy(): String {
@@ -273,7 +279,7 @@ fun getWeatherIconResource(weatherCode: Int?): ImageVector {
         // Llovizna helada
         56, 57 -> Icons.Filled.AcUnit
         // Lluvia
-        //61, 63, 65 -> Icons.Filled.Umbrella
+        61, 63, 65 -> Icons.Filled.Umbrella
         // Lluvia helada
         //66, 67 -> Icons.Filled.Snowing
         // Nevada

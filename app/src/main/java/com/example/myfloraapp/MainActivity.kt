@@ -42,7 +42,7 @@ import com.google.android.gms.location.LocationServices
 
 // 🔹 Nuevo data class para encapsular la ubicación
 //data class LocationData(val province: String, val latitude: Double?, val longitude: Double?)
-
+@Suppress("DEPRECATION")
 class MainActivity : ComponentActivity() {
     private lateinit var auth: FirebaseAuth
     private lateinit var fusedLocationClient: FusedLocationProviderClient
@@ -133,9 +133,7 @@ class MainActivity : ComponentActivity() {
                 }
         }
     }
-
 }
-
 
 @Composable
 fun MainScreen(auth : FirebaseAuth, locationData: LocationData){

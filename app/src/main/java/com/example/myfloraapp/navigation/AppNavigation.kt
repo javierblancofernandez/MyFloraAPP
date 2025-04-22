@@ -4,7 +4,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.myfloraapp.navigation.AppScreens
-import com.example.myfloraapp.screens.BorrarPlanta
+import com.example.myfloraapp.screens.ConsultaPlanta
 import com.example.myfloraapp.screens.CrearPlanta
 import com.example.myfloraapp.screens.Home
 import com.example.myfloraapp.screens.ListarPlanta
@@ -27,7 +27,7 @@ fun AppNavigation (
         composable(AppScreens.Login.ruta) { Login(navigationController, auth)}
         composable(AppScreens.Home.ruta) { Home(navigationController, auth,province,latitud,longitud)}
         composable(AppScreens.CrearPlanta.ruta) { CrearPlanta(auth, navigationController, viewModel())}
-        composable(AppScreens.BorrarPlanta.ruta) { BorrarPlanta(navigationController, auth)}
+        composable(AppScreens.ConsultaPlanta.ruta) { ConsultaPlanta(navigationController, auth)}
         composable(AppScreens.ListarPlanta.ruta) { ListarPlanta(navigationController, auth)}
         composable("DetallePlanta/{plantId}") { backStackEntry ->
             val plantId = backStackEntry.arguments?.getString("plantId") ?: ""

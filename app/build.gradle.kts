@@ -1,3 +1,5 @@
+import java.util.Properties// Import para Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -8,6 +10,7 @@ plugins {
 android {
     namespace = "com.example.myfloraapp"
     compileSdk = 35
+
 
     defaultConfig {
         applicationId = "com.example.myfloraapp"
@@ -21,14 +24,30 @@ android {
             useSupportLibrary = true
         }
     }
-
+    // Habilitar generación de BuildConfig
+    buildFeatures {
+        buildConfig = true
+        compose = true
+    }
+    // Cargar local.properties
+    val localProperties = Properties()
+    val localPropertiesFile = rootProject.file("local.properties")
+    if (localPropertiesFile.exists()) {
+        localProperties.load(localPropertiesFile.inputStream())
+    }
+    //***************************************************************
     buildTypes {
+        debug {
+            buildConfigField("String", "API_KEY", "\"${localProperties["api.key"] ?: ""}\"")
+        }
         release {
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            // Añadir API Key para release
+            buildConfigField("String", "API_KEY", "\"${localProperties["api.key"] ?: ""}\"")
         }
     }
     compileOptions {
@@ -49,6 +68,8 @@ android {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
+
+
 }
 
 dependencies {
@@ -77,7 +98,7 @@ dependencies {
     // Trasnform JSON
     implementation("com.google.code.gson:gson:2.10.1")
     //hoy
-    implementation ("com.google.android.gms:play-services-base:18.1.0")
+    //implementation ("com.google.android.gms:play-services-base:18.1.0")
     implementation ("com.google.firebase:firebase-core:21.1.1")
     //localización
     implementation("com.google.android.gms:play-services-location:21.0.1")
@@ -87,13 +108,16 @@ dependencies {
     // Retrofit + Gson
     implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
     // Coroutines
-    implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4")
+    //implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4")
+    implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
     //Manejo de fechas
     implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.1")
     //iconos meteorologicos
-    implementation("androidx.compose.material:material-icons-extended:1.6.0")
+    implementation("androidx.compose.material:material-icons-extended:1.7.8")
     //Coil para cargar imagenes
     implementation ("io.coil-kt:coil-compose:2.6.0")
+    //Serialización OjoMirar!!!para API ChatGPt
+    implementation ("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1")
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
@@ -105,7 +129,9 @@ dependencies {
     //Hilt
     implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
     //Iconos extendidos
-    implementation("androidx.compose.material:material-icons-extended:1.7.8")
     implementation ("com.google.android.gms:play-services-base:18.2.0")
     implementation ("com.google.android.gms:play-services-auth:20.7.0")
+    //splashScreen
+    implementation ("androidx.core:core-splashscreen:1.0.1") // Para Jetpack SplashScreen
+
 }
