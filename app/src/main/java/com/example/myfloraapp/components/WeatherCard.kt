@@ -14,13 +14,18 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.extended.*
+import androidx.compose.material.icons.automirrored.filled.HelpOutline
 import androidx.compose.material.icons.filled.AcUnit
 import androidx.compose.material.icons.filled.Cloud
 import androidx.compose.material.icons.filled.DeviceUnknown
 import androidx.compose.material.icons.filled.ElectricBolt
+import androidx.compose.material.icons.filled.FilterDrama
 import androidx.compose.material.icons.filled.Grain
+import androidx.compose.material.icons.filled.HelpOutline
 import androidx.compose.material.icons.filled.Thunderstorm
 import androidx.compose.material.icons.filled.Umbrella
+import androidx.compose.material.icons.filled.WaterDrop
 import androidx.compose.material.icons.filled.WbCloudy
 import androidx.compose.material.icons.filled.WbSunny
 import androidx.compose.material.icons.outlined.WbSunny
@@ -273,25 +278,23 @@ fun getWeatherIconResource(weatherCode: Int?): ImageVector {
         // Nublado
         3 -> Icons.Filled.Cloud
         // Niebla
-        //45, 48 -> Icons.Filled.Foggy
+        45, 48 -> Icons.Filled.FilterDrama
         // Llovizna
         51, 53, 55 -> Icons.Filled.Grain
         // Llovizna helada
         56, 57 -> Icons.Filled.AcUnit
         // Lluvia
-        61, 63, 65 -> Icons.Filled.Umbrella
+        61, 63, 65 -> Icons.Filled.WaterDrop
         // Lluvia helada
-        //66, 67 -> Icons.Filled.Snowing
+        66, 67 -> Icons.Filled.AcUnit
         // Nevada
-        //71, 73, 75 -> Icons.Filled.CloudySnowing
-        // Granizo
-        //77 -> Icons.Filled.Snowing
+        71, 73, 75,77,85,86 -> Icons.Filled.AcUnit
         // Chubascos
         80, 81, 82 -> Icons.Filled.Thunderstorm
         // Tormenta
         95, 96, 99 -> Icons.Filled.ElectricBolt
         // Valor por defecto
-        else -> Icons.Filled.DeviceUnknown
+        else -> Icons.AutoMirrored.Filled.HelpOutline
     }
 }
 
@@ -302,7 +305,30 @@ private fun translateWeatherCode(code: Int): String {
         1 -> "Mayormente despejado"
         2 -> "Parcialmente nublado"
         3 -> "Nublado"
-        // ... (agrega más casos según la documentación de Open-Meteo)
+        45 -> "Niebla"
+        48 -> "Niebla helada"
+        51 -> "Llovizna: Intensidad ligera"
+        53 -> "Llovizna: Intensidad moderada"
+        55 -> "Llovizna: Intensidad densa"
+        56 -> "Llovizna helada: Intensidad ligera"
+        57 -> "Llovizna helada: Intensidad densa"
+        61 -> "Lluvia leve"
+        63 -> "Lluvia moderada"
+        65 -> "Lluvia intensa"
+        66 -> "Lluvia helada leve"
+        67 -> "Lluvia helada intensa"
+        71 -> "Nieve leve"
+        73 -> "Nieve moderada"
+        75 -> "Nieve intensa"
+        77 -> "Granos de nieve"
+        80 -> "Chubascos leves"
+        81 -> "Chubascos moderados"
+        82 -> "Chubascos violentos"
+        85 -> "Nevadas leves"
+        86 -> "Nevadas intensas"
+        95 -> "Tormenta eléctrica"
+        96 -> "Tormenta con granizo leve"
+        99 -> "Tormenta con granizo intenso"
         else -> "Desconocido"
     }
 }
