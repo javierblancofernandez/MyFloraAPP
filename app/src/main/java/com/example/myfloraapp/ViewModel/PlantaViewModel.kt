@@ -16,61 +16,6 @@ import com.google.firebase.firestore.FirebaseFirestore
 
 class PlantaViewModel:ViewModel() {
 
-  /* var formState by mutableStateOf(PlantFormInsert())
-        private set
-
-    fun updateFormState(newState: PlantFormInsert) {
-        formState = newState
-    }
-
-    fun submitForm(navigateBack: () -> Unit) {
-        // Validación básica
-        if (formState.name.length < 2 || formState.species.length < 2 ||
-            formState.description.length < 10 || !isValidUrl(formState.image)) {
-            return
-        }
-
-        val newPlant = PlantData(
-            name = formState.name,
-            species = formState.species,
-            image = formState.image,
-            wateringFrequency = formState.wateringFrequency,
-            fertilizingFrequency = formState.fertilizingFrequency,
-            sunlight = formState.sunlight,
-            temperature = Temperature(
-                min = formState.minTemp,
-                max = formState.maxTemp,
-                ideal = formState.idealTemp
-            ),
-            humidity = Humidity(
-                min = formState.minHumidity,
-                max = formState.maxHumidity,
-                ideal = formState.idealHumidity
-            ),
-            description = formState.description,
-            tips = formState.tips.split("\n").filter { it.trim().isNotEmpty() }
-        )
-
-        // Simular guardado
-        /*viewModelScope.launch {
-            delay(1000) // Simular llamada a API
-            navigateBack()
-            Toast.makeText(
-                getApplication(),
-                "Planta añadida correctamente",
-                Toast.LENGTH_SHORT
-            ).show()
-        }*/
-    }
-
-    private fun isValidUrl(url: String): Boolean {
-        return try {
-            URL(url).toURI()
-            true
-        } catch (e: Exception) {
-            false
-        }
-    }*/
   var formState by mutableStateOf<PlantFormInsert?>(null)
       private set
 

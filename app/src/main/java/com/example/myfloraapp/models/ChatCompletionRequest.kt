@@ -1,4 +1,4 @@
-package com.example.myfloraapp.api
+package com.example.myfloraapp.models
 
 import kotlinx.serialization.Serializable
 

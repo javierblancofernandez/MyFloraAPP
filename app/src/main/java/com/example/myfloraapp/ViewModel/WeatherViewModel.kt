@@ -18,7 +18,6 @@ class WeatherViewModel : ViewModel() {
                 val response = OpenMeteoClient.api.getWeather(lat, lon)
                 _weatherData.value = response
             } catch (e: Exception) {
-                // Maneja el error (puedes usar otro StateFlow para errores)
                 e.printStackTrace()
             }
         }

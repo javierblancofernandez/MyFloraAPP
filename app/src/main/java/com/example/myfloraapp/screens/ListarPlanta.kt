@@ -40,47 +40,6 @@ fun ListarPlanta(
     auth: FirebaseAuth,
     viewModel: PlantaListViewModel = viewModel()
 ) {
-
-    /*Column(modifier = Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally)
-    {
-
-        Image(
-            painter= painterResource(R.drawable.myflorasolologopng),
-            contentDescription = "Logo MyFloraApp"
-        )
-
-        Text(text = "Pantalla para Listar Plantas", fontSize = 24.sp)
-        Spacer(modifier = Modifier.weight(1f))
-        /*Button(onClick = {navController.navigate("Login")})
-        {
-            Text(text = "Navegar a Login")
-        }
-        Spacer(modifier = Modifier.weight(1f))*/
-        val plants by viewModel.plants // Observamos el estado de las plantas
-
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(8.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            items(plants) { plants ->
-                Text(
-                    text = "Debug: ${plants.nombre}, ${plants.especie}",
-                    color = Color.Red,
-                    modifier = Modifier.padding(8.dp)
-                )
-                PlantCard(
-                    planta = plants,
-                    /*onClick = {
-                        // Navegar a una pantalla de detalle si lo deseas
-                        navController.navigate("plantDetail/${plant.plantId}")
-                    }*/
-                )
-            }
-        }
-    }*/
-
     val plants by viewModel.plants
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()

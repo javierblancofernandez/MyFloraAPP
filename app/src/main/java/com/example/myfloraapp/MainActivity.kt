@@ -40,8 +40,7 @@ import java.util.Locale
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 
-// 🔹 Nuevo data class para encapsular la ubicación
-//data class LocationData(val province: String, val latitude: Double?, val longitude: Double?)
+
 @Suppress("DEPRECATION")
 class MainActivity : ComponentActivity() {
     private lateinit var auth: FirebaseAuth

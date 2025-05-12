@@ -66,6 +66,8 @@ android {
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
+            excludes += "/META-INF/LICENSE.md"
+            excludes += "/META-INF/LICENSE-notice.md"
         }
     }
 
@@ -118,7 +120,17 @@ dependencies {
     implementation ("io.coil-kt:coil-compose:2.6.0")
     //Serialización OjoMirar!!!para API ChatGPt
     implementation ("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1")
+    //Test
+    implementation ("androidx.arch.core:core-testing:2.1.0")
+    implementation ("org.mockito:mockito-core:4.5.1")
+    implementation ("org.mockito.kotlin:mockito-kotlin:4.0.0")
+    implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.4")
+    implementation ("io.mockk:mockk:1.13.4")
+    implementation ("io.mockk:mockk-agent-jvm:1.13.4")
 
+
+    implementation(libs.androidx.room.external.antlr)
+    implementation(libs.androidx.media3.common.ktx)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

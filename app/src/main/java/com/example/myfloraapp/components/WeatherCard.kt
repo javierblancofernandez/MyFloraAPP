@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.extended.*
 import androidx.compose.material.icons.automirrored.filled.HelpOutline
 import androidx.compose.material.icons.filled.AcUnit
 import androidx.compose.material.icons.filled.Cloud
@@ -82,7 +81,6 @@ fun WeatherCard (
         }
     }
     // Título destacado "Tiempo Hoy"
-    // Título destacado "Tiempo Hoy" - CORRECCIÓN APPLICADA
     Text(
         text = "TIEMPO HOY",
         style = MaterialTheme.typography.titleLarge.copy(

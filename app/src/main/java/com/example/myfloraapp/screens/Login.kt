@@ -60,8 +60,6 @@ import com.google.firebase.auth.FirebaseAuth
 import org.intellij.lang.annotations.JdkConstants.HorizontalAlignment
 import java.lang.IllegalStateException
 
-
-
 @Composable
 fun Login (navController: NavHostController, auth: FirebaseAuth) {
     // True=Login ; False=Create
@@ -153,126 +151,6 @@ fun Login (navController: NavHostController, auth: FirebaseAuth) {
     }
 
 }
-
-/*@Composable
-fun Login(navController: NavHostController, auth: FirebaseAuth) {
-    val context = LocalContext.current
-    val showLoginForm = rememberSaveable { mutableStateOf(true) }
-    val TAG = "Login"
-
-    // Estado para controlar si reCAPTCHA está inicializado
-    val isRecaptchaInitialized = remember { mutableStateOf(false) }
-
-    // Inicializar reCAPTCHA al cargar la pantalla
-    LaunchedEffect(Unit) {
-        Log.d("JAVIERROR", "Inicializando configuración de reCAPTCHA")
-        auth.initializeRecaptchaConfig()
-            .addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    Log.d(TAG, "reCAPTCHA inicializado con éxito")
-                    isRecaptchaInitialized.value = true
-                } else {
-                    val exception = task.exception
-                    Log.e("JAVIERROR", "Error al inicializar reCAPTCHA", exception)
-                    if (exception is FirebaseNetworkException) {
-                        Toast.makeText(
-                            context,
-                            "Error de red al inicializar reCAPTCHA. Verifica tu conexión.",
-                            Toast.LENGTH_LONG
-                        ).show()
-                    } else {
-                        Toast.makeText(
-                            context,
-                            "Error al inicializar reCAPTCHA: ${exception?.message}",
-                            Toast.LENGTH_LONG
-                        ).show()
-                    }
-                }
-            }
-    }
-
-    Surface(
-        modifier = Modifier.fillMaxSize(),
-        color = Color(0xFFC8CFC8)
-    ) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
-            Image(
-                painter = painterResource(R.drawable.myflorasolologopng),
-                contentDescription = "Logo MyFloraApp"
-            )
-            Spacer(Modifier.height(32.dp))
-            if (showLoginForm.value) {
-                Text("Inicia sesión", style = MaterialTheme.typography.titleLarge)
-                UserForm(isCreateAccount = false) { email, password ->
-                    if (isRecaptchaInitialized.value) {
-                        Log.d(TAG, "Intentando iniciar sesión con $email")
-                        auth.signInWithEmailAndPassword(email, password)
-                            .addOnCompleteListener { task ->
-                                if (task.isSuccessful) {
-                                    Log.d(TAG, "Logueando con $email y $password")
-                                    Toast.makeText(context, "Inicio de sesión exitoso", Toast.LENGTH_SHORT).show()
-                                    navController.navigate("Home")
-                                } else {
-                                    Log.e(TAG, "Error al iniciar sesión", task.exception)
-                                    val message = when (task.exception) {
-                                        is FirebaseNetworkException -> "Error de red. Verifica tu conexión."
-                                        else -> "Error: ${task.exception?.message}"
-                                    }
-                                    Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
-                                }
-                            }
-                    } else {
-                        Toast.makeText(context, "Esperando inicialización de reCAPTCHA...", Toast.LENGTH_SHORT).show()
-                    }
-                }
-            } else {
-                Text("Crea una cuenta", style = MaterialTheme.typography.titleLarge)
-                UserForm(isCreateAccount = true) { email, password ->
-                    if (isRecaptchaInitialized.value) {
-                        Log.d(TAG, "Intentando crear cuenta con $email")
-                        auth.createUserWithEmailAndPassword(email, password)
-                            .addOnCompleteListener { task ->
-                                if (task.isSuccessful) {
-                                    Log.d(TAG, "Creando cuenta con $email y $password")
-                                    Toast.makeText(context, "Cuenta creada con éxito", Toast.LENGTH_SHORT).show()
-                                    // Opcional: navegar a Home directamente tras crear cuenta
-                                    navController.navigate("Home")
-                                } else {
-                                    Log.e(TAG, "Error al crear la cuenta", task.exception)
-                                    val message = when (task.exception) {
-                                        is FirebaseNetworkException -> "Error de red. Verifica tu conexión."
-                                        else -> "Error: ${task.exception?.message}"
-                                    }
-                                    Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
-                                }
-                            }
-                    } else {
-                        Toast.makeText(context, "Esperando inicialización de reCAPTCHA...", Toast.LENGTH_SHORT).show()
-                    }
-                }
-            }
-            Spacer(modifier = Modifier.height(15.dp))
-            Row(
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                val text1 = if (showLoginForm.value) "¿No tienes cuenta?" else "¿Ya tienes cuenta?"
-                val text2 = if (showLoginForm.value) "Regístrate" else "Inicia sesión"
-                Text(text = text1)
-                Text(
-                    text = text2,
-                    modifier = Modifier
-                        .clickable { showLoginForm.value = !showLoginForm.value }
-                        .padding(start = 5.dp),
-                    color = MaterialTheme.colorScheme.secondary
-                )
-            }
-        }
-    }
-}*/
 
 @Composable
 fun UserForm(
@@ -400,9 +278,8 @@ fun EmailInput(
         labelId = labelId,
         Keyboard = KeyboardType.Email
     )
-
-
 }
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun InputField(

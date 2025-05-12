@@ -24,6 +24,8 @@ liveData = "2.3.1"
 firebaseFirestoreKtxVersion = "25.1.2"
 #serializacion
 serialization = "1.8.10"
+roomExternalAntlr = "2.7.1"
+media3CommonKtx = "1.6.1"
 
 
 
@@ -55,6 +57,8 @@ androidx-lifeData = {group = "android.lifecycle", name= "lifecycle-viewmodel-ktx
 google-firebase-firestore-ktx = { group = "com.google.firebase", name = "firebase-firestore-ktx", version.ref = "firebaseFirestoreKtxVersion" }
 #Kotlin-serializacion
 kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version = "1.5.1" }
+androidx-room-external-antlr = { group = "androidx.room", name = "room-external-antlr", version.ref = "roomExternalAntlr" }
+androidx-media3-common-ktx = { group = "androidx.media3", name = "media3-common-ktx", version.ref = "media3CommonKtx" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

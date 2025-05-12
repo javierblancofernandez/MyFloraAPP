@@ -1,5 +1,6 @@
 package com.example.myfloraapp.screens
 
+import android.app.Activity
 import android.content.Intent
 import android.util.Log
 import androidx.compose.foundation.Image
@@ -43,30 +44,18 @@ fun SplashScreen() {
             "Bienvenido",
             style = MaterialTheme.typography.titleLarge
         )
-        Spacer(modifier = Modifier.size(5.dp))
-       /* OutlinedButton(
 
-            onClick = {
-                Log.d("Javi","Clic Continuar")
-                val intent = Intent(
-                    context,
-                    MainActivity::class.java
-                )
-                context.startActivity(intent)
-                }
-        ) {
-            Text(text = "Continuar",
-                style = MaterialTheme.typography.bodyLarge,
-                color = Color(0xFF000000)
-            )}*/
+        Spacer(modifier = Modifier.size(5.dp))
+
         Button(
             onClick = {
                 Log.d("Javi","Clic Continuar")
                 val intent = Intent(
                     context,
                     MainActivity::class.java
-                )
-                context.startActivity(intent)
+                )//Crea el intent
+                context.startActivity(intent) // Ejecuta la navegación
+                (context as Activity).finish() // Cierra el SplashActivity
             },
             modifier = Modifier
                 .padding(16.dp)

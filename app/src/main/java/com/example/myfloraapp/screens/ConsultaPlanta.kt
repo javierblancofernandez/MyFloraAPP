@@ -23,37 +23,39 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Send
 import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.myfloraapp.ViewModel.ConsultaPlantaViewModel
 import com.example.myfloraapp.api.OpenAIApiClient
-import com.example.myfloraapp.api.ChatCompletionRequest
-import com.example.myfloraapp.api.ChatMessage
+import com.example.myfloraapp.models.ChatCompletionRequest
+import com.example.myfloraapp.models.ChatMessage
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ConsultaPlanta(navController: NavHostController, auth: FirebaseAuth) {
+fun ConsultaPlanta(navController: NavHostController,
+                   auth: FirebaseAuth,
+                   viewModel: ConsultaPlantaViewModel = viewModel()
+) {
     Column(modifier = Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally)
     {
-        /*Image(
-            painter= painterResource(R.drawable.myflorasolologopng),
-            contentDescription = "Logo MyFloraApp"
-        )
 
-        Text(text = "Pantalla para Borrar Plantas", fontSize = 24.sp)
-        Spacer(modifier = Modifier.weight(1f))
-        /*Button(onClick = {navController.navigate("Login")})
-        {
-            Text(text = "Navegar a Login")
-        }
-        Spacer(modifier = Modifier.weight(1f))*/
-    }*/
-        val scope = rememberCoroutineScope()
-        var query by remember { mutableStateOf("") }
-        var response by remember { mutableStateOf<String?>(null) }
-        var isLoading by remember { mutableStateOf(false) }
+        val uiState by viewModel.uiState.collectAsState()
         val snackbarHostState = remember { SnackbarHostState() }
+        val scope = rememberCoroutineScope()
+
+        // Show error messages via Snackbar
+        uiState.error?.let { error ->
+            LaunchedEffect(error) {
+                scope.launch {
+                    snackbarHostState.showSnackbar(error)
+                    viewModel.clearResponse() // Clear error after displaying
+                }
+            }
+        }
 
         Scaffold(
             topBar = {
@@ -111,39 +113,30 @@ fun ConsultaPlanta(navController: NavHostController, auth: FirebaseAuth) {
                         verticalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
                         OutlinedTextField(
-                            value = query,
-                            onValueChange = { query = it },
+                            value = uiState.query,
+                            onValueChange = { viewModel.updateQuery(it) },
                             label = { Text("Escribe tu pregunta (ej: ¿Cómo cuido una orquídea?)") },
                             modifier = Modifier.fillMaxWidth(),
-                            enabled = !isLoading,
+                            enabled = !uiState.isLoading,
                             trailingIcon = {
-                                if (query.isNotBlank()) {
+                                if (uiState.query.isNotBlank()) {
                                     IconButton(
-                                        onClick = {
-                                            scope.launch {
-                                                isLoading = true
-                                                response = getFloraResponse(query)
-                                                isLoading = false
-                                                if (response?.startsWith("Error") == true) {
-                                                    snackbarHostState.showSnackbar(response!!)
-                                                }
-                                            }
-                                        },
-                                        enabled = !isLoading && query.isNotBlank()
+                                        onClick = { viewModel.submitQuery() },
+                                        enabled = !uiState.isLoading && uiState.query.isNotBlank()
                                     ) {
                                         Icon(Icons.Default.Send, contentDescription = "Enviar")
                                     }
                                 }
                             }
                         )
-                        if (isLoading) {
+                        if (uiState.isLoading) {
                             CircularProgressIndicator(
                                 modifier = Modifier
                                     .size(24.dp)
                                     .align(Alignment.CenterHorizontally)
                             )
                         }
-                        response?.let { resp ->
+                        uiState.response?.let { resp ->
                             Divider()
                             Text(
                                 text = "Respuesta de Flora:",
@@ -161,32 +154,5 @@ fun ConsultaPlanta(navController: NavHostController, auth: FirebaseAuth) {
                 }
             }
         }
-
-    }
-
-
-}
-suspend fun getFloraResponse(query: String): String {
-    return try {
-        val context = """
-            Eres Flora, un asistente botánico experto en el cuidado de plantas. Responde preguntas sobre plantas de forma clara, precisa y útil.
-            Proporciona consejos prácticos, información sobre riego, abono, luz solar, enfermedades o cualquier tema relacionado con plantas.
-            Usa un tono amigable y profesional. No respondas a preguntas no relacionadas con plantas.
-            Pregunta del usuario: $query
-        """.trimIndent()
-
-        val request = ChatCompletionRequest(
-            model = "gpt-3.5-turbo",
-            messages = listOf(
-                ChatMessage(role = "system", content = "Eres Flora, un asistente especializado en plantas."),
-                ChatMessage(role = "user", content = context)
-            )
-        )
-
-        val response = OpenAIApiClient.openAIApi.getChatCompletion(request)
-        response.choices.firstOrNull()?.message?.content ?: "No se pudo obtener una respuesta."
-    } catch (e: Exception) {
-        Log.e("FloraResponse", "Error al consultar Flora: $e")
-        "Error al obtener la respuesta. Intenta de nuevo."
     }
 }

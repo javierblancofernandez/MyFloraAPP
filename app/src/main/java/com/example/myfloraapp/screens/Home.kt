@@ -65,8 +65,8 @@ fun Home(
     // 3. Llama a la API cuando tengas las coordenadas
     LaunchedEffect(latitud, longitud) {
         if (latitud != null && longitud != null) {
-            //weatherViewModel.fetchWeather(latitud, longitud)
-            weatherViewModel.fetchWeather(40.41831, -3.70275)
+            weatherViewModel.fetchWeather(latitud, longitud)
+            //weatherViewModel.fetchWeather(40.41831, -3.70275)
         }
     }
 
