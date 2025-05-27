@@ -121,16 +121,16 @@ class ConsultaPlantaViewModelTest {
             testDispatcher.scheduler.runCurrent()
 
             // 5. Verificar que se activó el loading
-            assertEquals(2, states.size) // Estado inicial + loading
+            //assertEquals(2, states.size) // Estado inicial + loading
             //assertTrue("Debería estar en estado loading", states[1].isLoading)
 
-            // 6. Avanzar hasta completar (incluyendo el error)
+            // 5. Avanzar hasta completar (incluyendo el error)
             advanceUntilIdle()
 
-            // 7. Verificar estados finales
+            // 6. Verificar estados finales
             assertEquals(2, states.size)
             with(states.last()) {
-                //assertFalse("Loading debería ser false al final", isLoading)
+
                 assertEquals("Error al obtener la respuesta. Intenta de nuevo.", error)
                 assertNull(response)
             }

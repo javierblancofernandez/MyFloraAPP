@@ -34,6 +34,13 @@ import com.example.myfloraapp.models.ChatCompletionRequest
 import com.example.myfloraapp.models.ChatMessage
 import kotlinx.coroutines.launch
 
+/**
+ * Pantalla principal para realizar consultas sobre plantas al asistente botánico Flora.
+ *
+ * @param navController Controlador de navegación para manejar el flujo entre pantallas
+ * @param auth Instancia de FirebaseAuth para autenticación (no usado actualmente pero disponible para futuras extensiones)
+ * @param viewModel ViewModel que maneja la lógica de negocio y estado de la pantalla
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ConsultaPlanta(navController: NavHostController,
@@ -42,21 +49,22 @@ fun ConsultaPlanta(navController: NavHostController,
 ) {
     Column(modifier = Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally)
     {
-
+        // Recolectar el estado del ViewModel como estado compuesto
         val uiState by viewModel.uiState.collectAsState()
+        // Estado para manejar Snackbars (mensajes emergentes)
         val snackbarHostState = remember { SnackbarHostState() }
         val scope = rememberCoroutineScope()
 
-        // Show error messages via Snackbar
+        // Mostrar errores mediante Snackbar
         uiState.error?.let { error ->
             LaunchedEffect(error) {
                 scope.launch {
                     snackbarHostState.showSnackbar(error)
-                    viewModel.clearResponse() // Clear error after displaying
+                    viewModel.clearResponse() // Limpiar error después de mostrarlo
                 }
             }
         }
-
+        // Scaffold principal que contiene la estructura básica de la pantalla
         Scaffold(
             topBar = {
                 TopAppBar(
@@ -78,7 +86,7 @@ fun ConsultaPlanta(navController: NavHostController,
                     .verticalScroll(rememberScrollState()),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                // Tarjeta de bienvenida
+                // --- Tarjeta de Bienvenida ---
                 Card(
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(12.dp),
@@ -102,7 +110,7 @@ fun ConsultaPlanta(navController: NavHostController,
                     }
                 }
 
-                // Tarjeta de consulta
+                // --- Tarjeta de Consulta ---
                 Card(
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(12.dp),
@@ -129,6 +137,7 @@ fun ConsultaPlanta(navController: NavHostController,
                                 }
                             }
                         )
+                        // Spining
                         if (uiState.isLoading) {
                             CircularProgressIndicator(
                                 modifier = Modifier
@@ -136,6 +145,7 @@ fun ConsultaPlanta(navController: NavHostController,
                                     .align(Alignment.CenterHorizontally)
                             )
                         }
+                        // Mostrar respuesta si existe
                         uiState.response?.let { resp ->
                             Divider()
                             Text(
