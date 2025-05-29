@@ -14,8 +14,15 @@ import java.net.URL
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
+/**
+ * ViewModel para gestionar el formulario de plantas y su interacción con Firebase.
+ * Maneja:
+ * - Estado del formulario
+ * - Validación de datos
+ * - Operaciones CRUD con Firestore
+ */
 class PlantaViewModel:ViewModel() {
-
+    // Estado mutable del formulario, expuesto como State pero modificable solo internamente
   var formState by mutableStateOf<PlantFormInsert?>(null)
       private set
 
@@ -23,16 +30,28 @@ class PlantaViewModel:ViewModel() {
     private val auth = FirebaseAuth.getInstance()
     private val db = FirebaseFirestore.getInstance()
 
+    /**
+     * Actualiza el estado del formulario.
+     * @param newState Nuevo estado del formulario
+     */
     fun updateFormState(newState: PlantFormInsert) {
         formState = newState
     }
 
+    /**
+     * Limpia/resetea el estado del formulario.
+     */
     fun clearForm() {
         formState = null
     }
-
+    /**
+     * Envía el formulario a Firestore después de validar los datos.
+     * @param onSuccess Callback ejecutado al guardar exitosamente
+     * @param onError Callback ejecutado con mensaje de error si falla
+     */
     fun submitForm(onSuccess:() -> Unit, onError: (String) -> Unit) {
 
+        // Verificar que existe estado del formulario
         val currentFormState = formState ?: run {
             onError("El formulario está vacío")
             return
@@ -43,11 +62,13 @@ class PlantaViewModel:ViewModel() {
             onError("Por favor, completa todos los campos correctamente")
             return
         }*/
+
+        // Validación básica de campos numéricos
         if (currentFormState.wateringFrequency.equals(0)||currentFormState.fertilizingFrequency.equals(0)) {
             onError("El campo riego y abonado tienen que tener un número distinto de 0")
             return
         }
-
+        // Verificar usuario autenticado
         val userId = auth.currentUser?.uid
         if (userId == null) {
             onError("Usuario no autenticado")
@@ -57,7 +78,7 @@ class PlantaViewModel:ViewModel() {
         // Generar un ID único para la planta
         val plantaId = db.collection("plantas").document().id
 
-        // Crear el objeto PlantData
+        // Mapear datos del formulario a objeto PlantData
         val newPlant = PlantData(
             plantaId = plantaId,
             userId = userId, // Añadimos el userId del usuario autenticado
@@ -85,6 +106,7 @@ class PlantaViewModel:ViewModel() {
 
         // Guardar en Firestore
         viewModelScope.launch {
+            // Preparar datos para Firestore (estructura de mapas)
             val plantData = hashMapOf(
                 "plantaId" to newPlant.plantaId,
                 "userId" to newPlant.userId,
@@ -109,6 +131,7 @@ class PlantaViewModel:ViewModel() {
             )
 
             try {
+                // Guardar documento en Firestore
                 db.collection("plantas")
                     .document(plantaId) // Usamos el plantId como ID del documento
                     .set(plantData)   // Usamos .set() en lugar de .add()
@@ -127,7 +150,11 @@ class PlantaViewModel:ViewModel() {
     }
 
 
-
+    /**
+     * Valida si una URL es válida.
+     * @param url URL a validar
+     * @return true si la URL es válida, false de lo contrario
+     */
     private fun isValidUrl(url: String): Boolean {
         return try {
             URL(url).toURI()
@@ -136,25 +163,4 @@ class PlantaViewModel:ViewModel() {
             false
         }
     }
- /* private val _nif= MutableLiveData<String>()
-    val nif: LiveData<String> =_nif
-
-    private val _nombre = MutableLiveData<String>()
-    val nombre: LiveData<String> =_nombre
-
-    private val _proveedores = MutableStateFlow<List<Proveedor>>(emptyList())
-    val proveedores: StateFlow<List<Proveedor>> = _proveedores
-
-    private val _isButtonEnable= MutableLiveData<Boolean>()
-    val isButtonEnable: LiveData<Boolean> = _isButtonEnable
-
-    fun onCompleteFields(nif: String, nombre: String){
-        _nif.value=nif
-        _nombre.value = nombre
-        _isButtonEnable.value = enableButton(nif,nombre)
-
-    }
-
-    public fun enableButton(nif: String, nombre: String) =
-        nif.isNotEmpty() && nombre.isNotEmpty()*/
 }

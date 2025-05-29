@@ -41,271 +41,6 @@ import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.launch
 
 
-/*@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun CrearPlanta(
-    auth: FirebaseAuth,
-    navController: NavHostController,
-    viewModel: PlantaViewModel = viewModel()
-
-) {
-    //val formState = viewModel.formState
-    val formState = viewModel.formState ?: PlantFormInsert()
-    val scrollState = rememberScrollState()
-    val snackbarHostState = remember { SnackbarHostState() }
-    val scope = rememberCoroutineScope()
-    val context = LocalContext.current
-
-    Scaffold(
-        snackbarHost = { SnackbarHost(snackbarHostState) },
-        content = { paddingValues ->
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues)
-                    .padding(16.dp)
-                    .verticalScroll(scrollState)
-            ) {
-                Text(
-                    text = "Añadir Nueva Planta",
-                    style = MaterialTheme.typography.headlineSmall,
-                    modifier = Modifier.padding(bottom = 16.dp)
-                )
-
-                // Nombre
-                OutlinedTextField(
-                    value = formState.name,
-                    onValueChange = { viewModel.updateFormState(formState.copy(name = it)) },
-                    label = { Text("Nombre") },
-                    modifier = Modifier.fillMaxWidth()
-                )
-
-                // Especie
-                OutlinedTextField(
-                    value = formState.species,
-                    onValueChange = { viewModel.updateFormState(formState.copy(species = it)) },
-                    label = { Text("Especie") },
-                    modifier = Modifier.fillMaxWidth()
-                )
-
-                // Imagen URL
-                OutlinedTextField(
-                    value = formState.image,
-                    onValueChange = { viewModel.updateFormState(formState.copy(image = it)) },
-                    label = { Text("Imagen URL") },
-                    modifier = Modifier.fillMaxWidth()
-                )
-
-                // Luz
-                var expanded by remember { mutableStateOf(false) }
-                ExposedDropdownMenuBox(
-                    expanded = expanded,
-                    onExpandedChange = { expanded = !expanded }
-                ) {
-                    OutlinedTextField(
-                        value = when (formState.sunlight) {
-                            "low" -> "Sombra"
-                            "medium" -> "Media"
-                            "high" -> "Alta"
-                            else -> "Media"
-                        },
-                        onValueChange = {},
-                        readOnly = true,
-                        label = { Text("Luz") },
-                        trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
-                        modifier = Modifier
-                            .menuAnchor()
-                            .fillMaxWidth()
-                    )
-                    ExposedDropdownMenu(
-                        expanded = expanded,
-                        onDismissRequest = { expanded = false }
-                    ) {
-                        DropdownMenuItem(
-                            text = { Text("Sombra") },
-                            onClick = {
-                                viewModel.updateFormState(formState.copy(sunlight = "low"))
-                                expanded = false
-                            }
-                        )
-                        DropdownMenuItem(
-                            text = { Text("Media") },
-                            onClick = {
-                                viewModel.updateFormState(formState.copy(sunlight = "medium"))
-                                expanded = false
-                            }
-                        )
-                        DropdownMenuItem(
-                            text = { Text("Alta") },
-                            onClick = {
-                                viewModel.updateFormState(formState.copy(sunlight = "high"))
-                                expanded = false
-                            }
-                        )
-                    }
-                }
-
-                // Frecuencias
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    OutlinedTextField(
-                        value = formState.wateringFrequency.toString(),
-                        onValueChange = {
-                            viewModel.updateFormState(formState.copy(wateringFrequency = it.toIntOrNull() ?: 1))
-                        },
-                        label = { Text("Riego (días)") },
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                        modifier = Modifier.weight(1f)
-                    )
-                    OutlinedTextField(
-                        value = formState.fertilizingFrequency.toString(),
-                        onValueChange = {
-                            viewModel.updateFormState(formState.copy(fertilizingFrequency = it.toIntOrNull() ?: 1))
-                        },
-                        label = { Text("Abono (días)") },
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                        modifier = Modifier.weight(1f)
-                    )
-                }
-
-                // Temperatura
-                Text("Temperatura (°C)", style = MaterialTheme.typography.titleMedium)
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    OutlinedTextField(
-                        value = formState.minTemp.toString(),
-                        onValueChange = {
-                            viewModel.updateFormState(formState.copy(minTemp = it.toInt()))
-                        },
-                        label = { Text("Mínima") },
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                        modifier = Modifier.weight(1f)
-                    )
-                    OutlinedTextField(
-                        value = formState.maxTemp.toString(),
-                        onValueChange = {
-                            viewModel.updateFormState(formState.copy(maxTemp = it.toInt()))
-                        },
-                        label = { Text("Máxima") },
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                        modifier = Modifier.weight(1f)
-                    )
-                    OutlinedTextField(
-                        value = formState.idealTemp.toString(),
-                        onValueChange = {
-                            viewModel.updateFormState(formState.copy(idealTemp = it.toInt()))
-                        },
-                        label = { Text("Ideal") },
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                        modifier = Modifier.weight(1f)
-                    )
-                }
-
-                // Humedad
-                Text("Humedad (%)", style = MaterialTheme.typography.titleMedium)
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    OutlinedTextField(
-                        value = formState.minHumidity.toString(),
-                        onValueChange = {
-                            //viewModel.updateFormState(formState.copy(minHumidity = it.toDoubleOrNull() ?: 0))
-                            viewModel.updateFormState(formState.copy(minHumidity = it.toInt()))
-                        },
-                        label = { Text("Mínima") },
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                        modifier = Modifier.weight(1f)
-                    )
-                    OutlinedTextField(
-                        value = formState.maxHumidity.toString(),
-                        onValueChange = {
-                            //viewModel.updateFormState(formState.copy(maxHumidity = it.toDoubleOrNull() ?: 0))
-                            viewModel.updateFormState(formState.copy(maxHumidity = it.toInt()))
-                        },
-                        label = { Text("Máxima") },
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                        modifier = Modifier.weight(1f)
-                    )
-                    OutlinedTextField(
-                        value = formState.idealHumidity.toString(),
-                        onValueChange = {
-                            //viewModel.updateFormState(formState.copy(idealHumidity = it.toDoubleOrNull() ?: 0))
-                            viewModel.updateFormState(formState.copy(idealHumidity = it.toInt()))
-                        },
-                        label = { Text("Ideal") },
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                        modifier = Modifier.weight(1f)
-                    )
-                }
-
-                // Localización
-                OutlinedTextField(
-                    value = formState.localizacion,
-                    onValueChange = { viewModel.updateFormState(formState.copy(localizacion = it)) },
-                    label = { Text("Localizacion") },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(100.dp),
-                    maxLines = 4
-                )
-
-                // Consejos
-                OutlinedTextField(
-                    value = formState.consejo,
-                    onValueChange = { viewModel.updateFormState(formState.copy(consejo = it)) },
-                    label = { Text("Consejos de cuidado") },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(100.dp),
-                    maxLines = 4
-                )
-
-                // Botones
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 16.dp),
-                    horizontalArrangement = Arrangement.End
-                ) {
-                    OutlinedButton(
-                        onClick = { navController.popBackStack() },
-                        modifier = Modifier.padding(end = 8.dp)
-                    ) {
-                        Text("Cancelar")
-                    }
-                    Button(
-                        onClick = {
-                            viewModel.submitForm(
-                                onSuccess = {
-                                    scope.launch {
-                                        snackbarHostState.showSnackbar("Planta guardada con éxito")
-                                        viewModel.clearForm() // Limpiamos el formulario
-                                    }
-                                    //navController.popBackStack()
-
-
-                                },
-                                onError = { errorMessage ->
-                                    scope.launch {
-                                        snackbarHostState.showSnackbar(errorMessage)
-                                    }
-                                }
-
-                            )
-                        }
-                    ) {
-                        Text("Guardar planta")
-                    }
-                }
-            }
-        }
-    )
-}*/
 // Lista de las 52 provincias de España
 val provinciasEspana = listOf(
     "Álava", "Albacete", "Alicante", "Almería", "Asturias", "Ávila", "Badajoz",
@@ -317,7 +52,13 @@ val provinciasEspana = listOf(
     "Soria", "Tarragona", "Santa Cruz de Tenerife", "Teruel", "Toledo", "Valencia",
     "Valladolid", "Vizcaya", "Zamora", "Zaragoza", "Ceuta", "Melilla"
 )
-
+/**
+ * Pantalla para crear una nueva planta con un formulario completo.
+ *
+ * @param auth Instancia de FirebaseAuth para autenticación (disponible para futuras extensiones)
+ * @param navController Controlador de navegación para manejar el flujo entre pantallas
+ * @param viewModel ViewModel que maneja el estado del formulario y la lógica de negocio
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CrearPlanta(
@@ -325,12 +66,15 @@ fun CrearPlanta(
     navController: NavHostController,
     viewModel: PlantaViewModel = viewModel()
 ) {
+    // Estado del formulario con valores por defecto
     val formState = viewModel.formState ?: PlantFormInsert()
+    // Estados para controlar la UI
     val scrollState = rememberScrollState()
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
 
+    // Scaffold principal que contiene la estructura de la pantalla
     Scaffold(
         snackbarHost = { SnackbarHost(snackbarHostState) },
         content = { paddingValues ->
@@ -339,12 +83,14 @@ fun CrearPlanta(
                     .fillMaxSize()
                     .padding(paddingValues)
             ) {
+                // Columna desplazable con el formulario
                 Column(
                     modifier = Modifier
                         .weight(1f)
                         .padding(24.dp)
                         .verticalScroll(scrollState)
                 ) {
+                    // Título de la pantalla
                     Text(
                         text = "Añadir Nueva Planta",
                         style = MaterialTheme.typography.headlineMedium,
@@ -358,17 +104,17 @@ fun CrearPlanta(
                         modifier = Modifier.padding(bottom = 8.dp)
                     )
 
-                    // Nombre
+                    // Campo: Nombre de la planta
                     OutlinedTextField(
                         value = formState.name,
                         onValueChange = { viewModel.updateFormState(formState.copy(name = it)) },
-                        label = { Text("Nombre") },
+                        label = { Text("Nombre *") },
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(bottom = 12.dp)
                     )
 
-                    // Especie
+                    // Campo: Especie de la planta
                     OutlinedTextField(
                         value = formState.species,
                         onValueChange = { viewModel.updateFormState(formState.copy(species = it)) },
@@ -378,7 +124,7 @@ fun CrearPlanta(
                             .padding(bottom = 12.dp)
                     )
 
-                    // Imagen URL
+                    // Campo: URL de la imagen
                     OutlinedTextField(
                         value = formState.image,
                         onValueChange = { viewModel.updateFormState(formState.copy(image = it)) },
@@ -395,7 +141,7 @@ fun CrearPlanta(
                         modifier = Modifier.padding(bottom = 8.dp)
                     )
 
-                    // Luz (dropdown)
+                    // Selector: Requerimientos de luz (dropdown)
                     var luzExpanded by remember { mutableStateOf(false) }
                     ExposedDropdownMenuBox(
                         expanded = luzExpanded,
@@ -445,7 +191,7 @@ fun CrearPlanta(
                         }
                     }
 
-                    // Frecuencias
+                    // Campos: Frecuencias de riego y abono
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -474,7 +220,7 @@ fun CrearPlanta(
                         )
                     }
 
-                    // Temperatura
+                    // Campos: Temperatura (mínima, máxima e ideal)
                     Text(
                         text = "Temperatura (°C)",
                         style = MaterialTheme.typography.titleMedium,
@@ -515,7 +261,7 @@ fun CrearPlanta(
                         )
                     }
 
-                    // Humedad
+                    // Campos: Humedad (mínima, máxima e ideal)
                     Text(
                         text = "Humedad (%)",
                         style = MaterialTheme.typography.titleMedium,
@@ -556,7 +302,7 @@ fun CrearPlanta(
                         )
                     }
 
-                    // Localización (nuevo dropdown de provincias)
+                    // Selector: Provincia (dropdown)
                     var provinciaExpanded by remember { mutableStateOf(false) }
                     ExposedDropdownMenuBox(
                         expanded = provinciaExpanded,
@@ -589,7 +335,7 @@ fun CrearPlanta(
                         }
                     }
 
-                    // Consejos
+                    // Campo: Consejos de cuidado (área de texto multilínea)
                     OutlinedTextField(
                         value = formState.consejo,
                         onValueChange = { viewModel.updateFormState(formState.copy(consejo = it)) },
