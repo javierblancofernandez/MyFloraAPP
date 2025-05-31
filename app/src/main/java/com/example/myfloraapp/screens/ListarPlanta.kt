@@ -34,14 +34,30 @@ import com.google.firebase.auth.FirebaseAuth
 import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.coroutines.launch
 
+/**
+ * Pantalla composable que muestra una lista de plantas con funcionalidad CRUD.
+ *
+ * @param navController Controlador de navegación para manejar transiciones entre pantallas
+ * @param auth Instancia de FirebaseAuth para verificación de autenticación
+ * @param viewModel ViewModel que gestiona la lógica de negocio (inyectado por defecto)
+ *
+ * Características principales:
+ * - Muestra lista scrollable de plantas usando LazyColumn
+ * - Incluye FAB para añadir nuevas plantas
+ * - Proporciona acciones por cada planta (ver detalles, eliminar, regar, abonar)
+ * - Maneja feedback visual mediante Snackbars
+ */
 @Composable
 fun ListarPlanta(
     navController: NavHostController,
     auth: FirebaseAuth,
     viewModel: PlantaListViewModel = viewModel()
 ) {
+    // Estado observado de la lista de plantas
     val plants by viewModel.plants
+    // Estado para mostrar Snackbars (mensajes temporales)
     val snackbarHostState = remember { SnackbarHostState() }
+    // CoroutineScope para operaciones asíncronas
     val scope = rememberCoroutineScope()
 
     Scaffold(
@@ -49,6 +65,7 @@ fun ListarPlanta(
         floatingActionButton = {
             FloatingActionButton(
                 onClick = {
+                    // Navega a la pantalla de CrearPlanta
                     navController.navigate("crearPlanta")
                 }
             ) {
@@ -59,6 +76,7 @@ fun ListarPlanta(
             }
         }
     ) { paddingValues ->
+        // Lista optimizada de plantas
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
@@ -67,11 +85,14 @@ fun ListarPlanta(
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             items(plants) { planta ->
+                // Componente reutilizable para cada planta
                 PlantCard(
                     planta = planta,
                     onClick = {
+                        // Navegar a pantalla de detalles con ID
                         navController.navigate("detallePlanta/${planta.plantaId}")
                     },
+                    // Lógica para eliminar planta
                     onDelete = { plantaId ->
                         viewModel.deletePlant(
                             plantaId = plantaId,
@@ -88,6 +109,7 @@ fun ListarPlanta(
                         )
                     },
                     onWater = { plantaId ->
+                        // Registrar acción de riego
                         viewModel.waterPlant(
                             plantaId = plantaId,
                             onSuccess = {
@@ -103,6 +125,7 @@ fun ListarPlanta(
                         )
                     },
                     onFertilize = { plantaId ->
+                        // Registrar acción de abono
                         viewModel.fertilizePlant(
                             plantaId = plantaId,
                             onSuccess = {

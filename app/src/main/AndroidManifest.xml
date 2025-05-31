@@ -21,7 +21,7 @@
         <activity
             android:name=".SplashActivity"
             android:exported="true"
-            android:label="@string/app_name"
+            android:label="MyFLoraApp"
             android:theme="@style/Theme.MyFloraApp">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

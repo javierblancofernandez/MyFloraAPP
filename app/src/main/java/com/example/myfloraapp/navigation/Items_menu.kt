@@ -2,7 +2,13 @@ package com.example.myfloraapp.navigation
 
 import com.example.myfloraapp.R
 
-
+/**
+ * Clase sellada que representa los ítems del menú de navegación inferior.
+ *
+ * @param icon Icono del ítem (referencia a recurso drawable)
+ * @param title Texto que se mostrará en la barra de navegación
+ * @param ruta Ruta de navegación asociada con este ítem (coincide con AppScreens.ruta)
+ */
 sealed class Items_menu(
     val icon: Int,
     val title: String,

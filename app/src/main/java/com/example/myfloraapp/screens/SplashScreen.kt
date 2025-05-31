@@ -28,6 +28,13 @@ import androidx.compose.ui.unit.sp
 import com.example.myfloraapp.MainActivity
 import com.example.myfloraapp.R
 
+/**
+ * Pantalla de bienvenida que se muestra al iniciar la aplicación.
+ *
+ * Esta función composable muestra un logo, un mensaje de bienvenida y un botón para continuar.
+ * Al pulsar el botón, se navega a [MainActivity] y se cierra la actividad actual ([SplashActivity]).
+ *
+ */
 @Composable
 fun SplashScreen() {
     val context = LocalContext.current
@@ -54,7 +61,7 @@ fun SplashScreen() {
                     context,
                     MainActivity::class.java
                 )//Crea el intent
-                context.startActivity(intent) // Ejecuta la navegación
+                context.startActivity(intent) // Navega a MainActivity
                 (context as Activity).finish() // Cierra el SplashActivity
             },
             modifier = Modifier
@@ -73,6 +80,4 @@ fun SplashScreen() {
             )
         }
     }
-
-
 }

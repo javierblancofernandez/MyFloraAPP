@@ -13,6 +13,17 @@ import com.google.firebase.auth.FirebaseAuth
 import androidx.navigation.NavHostController
 import com.example.myfloraapp.screens.DetallePlanta
 
+/**
+ * Función que configura y gestiona la navegación entre pantallas de la aplicación.
+ *
+ * Define las rutas y los parámetros necesarios para cada pantalla (`Composable`) usando `NavHost`.
+ *
+ * @param navigationController Controlador de navegación que maneja las transiciones entre pantallas
+ * @param auth Instancia de FirebaseAuth para manejar la autenticación del usuario
+ * @param province Nombre de la provincia actual del usuario (para mostrar clima)
+ * @param latitud Coordenada de latitud de la ubicación actual del usuario
+ * @param longitud Coordenada de longitud de la ubicación actual del usuario
+ */
 @Composable
 fun AppNavigation (
     navigationController: NavHostController,
@@ -21,7 +32,7 @@ fun AppNavigation (
     latitud: Double?,
     longitud: Double?
     ) {
-    //val navigationController = rememberNavController()
+    // Define la estructura de navegación usando NavHost
     NavHost(navController = navigationController, startDestination = AppScreens.Login.ruta)
     {
         composable(AppScreens.Login.ruta) { Login(navigationController, auth)}
@@ -29,6 +40,7 @@ fun AppNavigation (
         composable(AppScreens.CrearPlanta.ruta) { CrearPlanta(auth, navigationController, viewModel())}
         composable(AppScreens.ConsultaPlanta.ruta) { ConsultaPlanta(navigationController, auth)}
         composable(AppScreens.ListarPlanta.ruta) { ListarPlanta(navigationController, auth)}
+        // Ruta con parámetro: muestra detalles de una planta específica
         composable("DetallePlanta/{plantId}") { backStackEntry ->
             val plantId = backStackEntry.arguments?.getString("plantId") ?: ""
             DetallePlanta(navigationController, plantId)

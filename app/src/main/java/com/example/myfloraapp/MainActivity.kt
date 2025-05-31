@@ -40,7 +40,14 @@ import java.util.Locale
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 
-
+/**
+ * MainActivity - Punto de entrada principal de la aplicación.
+ * Maneja:
+ * - Permisos de ubicación
+ * - Obtención de coordenadas GPS
+ * - Configuración inicial de Firebase Auth
+ * - Navegación principal
+ */
 @Suppress("DEPRECATION")
 class MainActivity : ComponentActivity() {
     private lateinit var auth: FirebaseAuth
@@ -48,13 +55,15 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        // Inicialización de servicios
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
         auth = Firebase.auth
         enableEdgeToEdge()
-
+        // Configuración del lanzador de permisos
         val requestPermissionLauncher =
             registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
                 if (isGranted) {
+                    // Permiso concedido - obtener ubicación
                     getLocation { locationData ->
                         setContent {
                             MyFloraAppTheme {
@@ -70,7 +79,7 @@ class MainActivity : ComponentActivity() {
                     }
                 }
             }
-
+        // Configuración del contenido principal
         setContent {
             MyFloraAppTheme {
                 var locationData by remember {
@@ -83,7 +92,7 @@ class MainActivity : ComponentActivity() {
                     )
                 }
                 MainScreen(auth, locationData)
-
+                // Solicitar permiso si no está concedido
                 if (ActivityCompat.checkSelfPermission(
                         this,
                         Manifest.permission.ACCESS_FINE_LOCATION
@@ -91,6 +100,7 @@ class MainActivity : ComponentActivity() {
                 ) {
                     requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
                 } else {
+                    // Obtener ubicación si ya tiene permiso
                     getLocation { newLocation ->
                         locationData = newLocation
                     }
@@ -99,6 +109,10 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    /**
+     * Obtiene la ubicación actual del dispositivo.
+     * @param onLocationFound Callback que recibe los datos de ubicación
+     */
     private fun getLocation(onLocationFound: (LocationData) -> Unit) {
         if (ActivityCompat.checkSelfPermission(
                 this,
@@ -108,6 +122,7 @@ class MainActivity : ComponentActivity() {
             fusedLocationClient.lastLocation
                 .addOnSuccessListener { location ->
                     if (location != null) {
+                        // Geocodificación inversa para obtener nombre de provincia
                         val geocoder = Geocoder(this, Locale.getDefault())
                         try {
                             val addresses =
@@ -134,14 +149,21 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+/**
+ * Pantalla principal que contiene la estructura base de navegación.
+ * @param auth Instancia de FirebaseAuth para autenticación
+ * @param locationData Datos de ubicación obtenidos del dispositivo
+ */
 @Composable
 fun MainScreen(auth : FirebaseAuth, locationData: LocationData){
     val navController = rememberNavController()
+    // Obtiene la ruta actual para condicionar la visibilidad de la barra inferior
     val currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
 
     Scaffold (
         bottomBar ={
             if(currentRoute != "Login") {
+                // Oculta la barra inferior en la pantalla de Login
                 NavegacionInferior(navController, auth)
             }
         }
@@ -151,6 +173,7 @@ fun MainScreen(auth : FirebaseAuth, locationData: LocationData){
             modifier = Modifier.padding(padding).fillMaxSize()
 
         ){
+            // Configuración del sistema de navegación principal
             AppNavigation(navController,auth, locationData.province, locationData.latitude, locationData.longitude )
         }
 

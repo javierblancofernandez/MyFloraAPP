@@ -74,7 +74,21 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
 
+/**
+ * Pantalla que muestra los detalles completos de una planta específica.
+ *
+ * Funcionalidades principales:
+ * - Visualización de información básica de la planta (nombre, especie, imagen)
+ * - Muestra requerimientos de cuidado (riego, abono, luz solar)
+ * - Integración con API meteorológica para mostrar condiciones actuales
+ * - Sistema de alertas para condiciones climáticas adversas
+ * - Permite editar la información de la planta
+ *
+ * @param navController Controlador de navegación para manejar el flujo entre pantallas
+ * @param plantId ID único de la planta a mostrar, usado para recuperar los datos
+ */
 @OptIn(ExperimentalMaterial3Api::class)
+@Suppress("DEPRECATION")
 @Composable
 fun DetallePlanta(
     navController: NavHostController,
@@ -83,18 +97,21 @@ fun DetallePlanta(
     val db = FirebaseFirestore.getInstance()
     val scope = rememberCoroutineScope()
     val TAG = "PlantDetail"
+    // Estados que almacenan los datos de la planta y el clima
     var plant by remember { mutableStateOf<PlantData?>(null) }
     var weather by remember { mutableStateOf<WeatherResponse?>(null) }
+    // Estados para mostrar mensajes y diálogos
     val snackbarHostState = remember { SnackbarHostState() }
     var showTempDialog by remember { mutableStateOf(false) }
     var tempDialogMessage by remember { mutableStateOf("") }
     var showEditSheet by remember { mutableStateOf(false) }
-
+    // Estados para datos editables
     var nombre by remember { mutableStateOf("") }
     var riego by remember { mutableStateOf("") }
     var abono by remember { mutableStateOf("") }
     var consejos by remember { mutableStateOf(listOf<String>()) }
 
+    // Carga la planta desde Firestore cuando cambia el plantId
     LaunchedEffect(plantId) {
         try {
             val snapshot = db.collection("plantas").document(plantId).get().await()
@@ -107,11 +124,13 @@ fun DetallePlanta(
                 abono = loadedPlant.abono.toString()
                 consejos = loadedPlant.consejo
                 Log.d(TAG, "Planta cargada: ${loadedPlant.nombre}")
-
+                // Si tiene localización, intenta obtener el clima desde la API
                 if (!loadedPlant.localizacion.isNullOrBlank()) {
                     try {
+                        // Llamada API OpenMeteoGeocoding para conseguir latitud y longitud pasando la localización
                         val geoResult = OpenMeteoGeocodingClient.api.geocodeCity("${loadedPlant.localizacion}")
                         val coords = geoResult.results?.firstOrNull()
+                        // Llamada a la API de clima OpenMeteo pasandole las coordenadas.
                         if (coords != null) {
                             val response = OpenMeteoClient.api.getWeather(
                                 lat = coords.latitude,
@@ -129,7 +148,7 @@ fun DetallePlanta(
             Log.e(TAG, "Error al cargar la planta", e)
         }
     }
-
+    // Interfaz de usuario principal
     Scaffold(
         topBar = {
             TopAppBar(
@@ -148,6 +167,7 @@ fun DetallePlanta(
         },
         snackbarHost = { SnackbarHost(snackbarHostState) }
     ) { paddingValues ->
+        // Si no hay planta cargada, muestra un indicador de carga
         if (plant == null) {
             Box(
                 modifier = Modifier.fillMaxSize().padding(paddingValues),
@@ -156,6 +176,7 @@ fun DetallePlanta(
                 CircularProgressIndicator()
             }
         } else {
+            // Si hay planta, muestra su información
             Column(
                 modifier = Modifier
                     .fillMaxSize()
@@ -163,6 +184,7 @@ fun DetallePlanta(
                     .padding(16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
+                // Imagen de la planta
                 AsyncImage(
                     model = plant!!.imagen,
                     contentDescription = plant!!.nombre,
@@ -172,10 +194,10 @@ fun DetallePlanta(
                         .height(200.dp)
                         .clip(RoundedCornerShape(16.dp))
                 )
-
+                // Nombre y especie
                 Text(text = plant!!.nombre, fontSize = 24.sp, fontWeight = FontWeight.Bold)
                 Text(text = plant!!.especie, fontSize = 18.sp, color = Color.Gray)
-
+                // Tarjeta con la información
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -195,6 +217,7 @@ fun DetallePlanta(
                             fontWeight = FontWeight.SemiBold,
                             modifier = Modifier.padding(bottom = 8.dp)
                         )
+                        // Ítems de detalle reutilizables
                         PlantDetailItem(icon = Icons.Default.WaterDrop, label = "Frecuencia de Riego", value = "${plant!!.riego} días")
                         PlantDetailItem(icon = Icons.Default.CalendarToday, label = "Último Riego", value = formatFriendlyDate(plant!!.lastWatered) ?: "Nunca")
                         PlantDetailItem(icon = Icons.Default.Grass, label = "Frecuencia de Abono", value = "${plant!!.abono} días")
@@ -215,14 +238,14 @@ fun DetallePlanta(
                             val minTemp = plant!!.temperatura.min
                             val maxTemp = plant!!.temperatura.max
                             val idealTemp = plant!!.temperatura.ideal
-
+                            // Color de estado de temperatura
                             val tempStatusColor = when {
                                 currentTemp <= minTemp || currentTemp >= maxTemp -> Color.Red
                                 abs(currentTemp - idealTemp) <= 2 -> Color.Green
                                 abs(currentTemp - maxTemp) <= 2 || abs(currentTemp - minTemp) <= 2 -> Color.Yellow
                                 else -> Color.Gray
                             }
-
+                            // Indicador de color con clic para mostrar diálogo
                             Row(
                                 verticalAlignment = Alignment.CenterVertically,
                                 horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -250,6 +273,7 @@ fun DetallePlanta(
                             }
                             PlantDetailItem(icon = Icons.Default.Water, label = "Humedad", value = "${weatherData.current.relative_humidity_2m}%")
                         } ?: run {
+                            // Si no hay clima
                             if (plant!!.localizacion.isNotBlank()) {
                                 PlantDetailItem(icon = Icons.Default.Cloud, label = "Clima", value = "Cargando datos del clima...")
                             } else {
@@ -257,7 +281,7 @@ fun DetallePlanta(
                             }
                         }
 
-                        // Sección: Consejos
+                        // Sección: Consejos de cuidado
                         if (plant!!.consejo.isNotEmpty()) {
                             Spacer(modifier = Modifier.height(16.dp))
                             Text(
@@ -273,7 +297,7 @@ fun DetallePlanta(
                     }
                 }
             }
-
+            // Diálogo emergente con información de temperatura
             if (showTempDialog) {
                 AlertDialog(
                     onDismissRequest = { showTempDialog = false },
@@ -286,10 +310,10 @@ fun DetallePlanta(
                     }
                 )
             }
-
+            // Hoja inferior para editar la planta
             if (showEditSheet) {
                 EditPlant(
-                    plant = plant!!,
+                    plant = plant!!,// se asegura que plant no es null
                     onDismiss = { showEditSheet = false },
                     onSave = { updatedPlant ->
                         plant = updatedPlant
@@ -301,7 +325,13 @@ fun DetallePlanta(
     }
 }
 
-// Componente auxiliar para items de detalle
+/**
+ * Componente reutilizable para mostrar un ítem de información de la planta.
+ *
+ * @param icon Icono que representa el tipo de información
+ * @param label Etiqueta descriptiva del dato (opcional)
+ * @param value Valor a mostrar para este ítem
+ */
 @Composable
 fun PlantDetailItem(icon: ImageVector, label: String, value: String) {
     Row(

@@ -37,6 +37,15 @@ import com.example.myfloraapp.ViewModel.WeatherViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.example.myfloraapp.components.WeatherCard
 
+/**
+ * Pantalla principal que muestra información meteorológica para una ubicación específica.
+ *
+ * @param navController Controlador de navegación para manejar transiciones entre pantallas
+ * @param auth Instancia de FirebaseAuth para autenticación (no utilizado actualmente)
+ * @param province Nombre de la provincia/ubicación a mostrar
+ * @param latitud Latitud geográfica de la ubicación (nullable)
+ * @param longitud Longitud geográfica de la ubicación (nullable)
+ */
 @Composable
 fun Home(
     navController: NavHostController,
@@ -45,17 +54,7 @@ fun Home(
     latitud: Double?,
     longitud: Double?
 ) {
-    /*Column(modifier = Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally)
-    {
-        Spacer(modifier = Modifier.weight(1f))
-        Text(text = "Pantalla de Home", fontSize = 24.sp)
-        Spacer(modifier = Modifier.weight(1f))
-        /*Button(onClick = {navController.navigate("Login")})
-        {
-            Text(text = "Navegar a Login")
-        }
-        Spacer(modifier = Modifier.weight(1f))*/
-    }*/
+
     // 1. Obtén el ViewModel del clima
     val weatherViewModel: WeatherViewModel = viewModel()
 
@@ -69,7 +68,7 @@ fun Home(
             //weatherViewModel.fetchWeather(40.41831, -3.70275)
         }
     }
-
+    // Layout principal de la pantalla
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -80,7 +79,7 @@ fun Home(
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Spacer(modifier = Modifier.size(10.dp))
-
+        // Componente que muestra la tarjeta del clima
         WeatherCard(
             weatherData = weatherData,
             modifier = Modifier.fillMaxWidth(),
@@ -89,67 +88,4 @@ fun Home(
     }
 
 }
-    /*Card(
-        shape = RoundedCornerShape(16.dp),
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(8.dp)
-    ) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.Top
-            ) {
-                Column {
-                    Text(
-                        text = "${province},España",
-                        fontSize = 14.sp,
-                        color = MaterialTheme.colorScheme.secondary
-                    )
-                    Row(verticalAlignment = Alignment.Bottom) {
-                        Text(
-                            text = "20°C",
-                            fontSize = 28.sp,
-                            fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
-                        )
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text(
-                            text = "Sensación: 10°C",
-                            fontSize = 12.sp,
-                            color = MaterialTheme.colorScheme.secondary
-                        )
-                    }
-                    Text(text = "weather.condition", fontSize = 14.sp)
-                }
 
-                Text(text = "weather.icon", fontSize = 10.sp)
-                Text(text = latitud.toString(), fontSize = 10.sp)
-                Text(text = longitud.toString(), fontSize = 10.sp)
-
-            }
-
-            Spacer(modifier = Modifier.height(12.dp))
-
-            Divider()
-
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 8.dp),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                WeatherDetail("Humedad", "45%")
-                WeatherDetail("Índice UV", "4")
-            }
-        }
-    }
-}
-
-@Composable
-fun WeatherDetail(label: String, value: String) {
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        Text(text = label, fontSize = 12.sp, color = MaterialTheme.colorScheme.secondary)
-        Text(text = value, fontSize = 14.sp, fontWeight = androidx.compose.ui.text.font.FontWeight.Medium)
-    }
-}*/

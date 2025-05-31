@@ -53,7 +53,20 @@ import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 
 
-
+/**
+ * Composable que muestra una tarjeta con el clima actual en una ubicación determinada.
+ *
+ * Funcionalidades principales:
+ * - Visualiza el estado actual del clima (temperatura, sensación térmica, descripción)
+ * - Muestra un icono representativo del tiempo según el código meteorológico
+ * - Incluye información adicional en formato de cuadrícula: viento, humedad, UV, precipitación
+ * - Adapta el formato de fecha al sistema operativo
+ * - Usa colores dinámicos según el tema y el código del clima
+ *
+ * @param weatherData Datos climáticos actuales obtenidos desde la API de OpenMeteo
+ * @param modifier Modificador opcional para ajustar el diseño externo del componente
+ * @param locationName Nombre de la ubicación que se mostrará en la tarjeta
+ */
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun WeatherCard (
@@ -176,7 +189,14 @@ fun WeatherCard (
     }
 }
 
-// Nueva función de extensión para formateo robusto de fechas
+/**
+ * Formatea una fecha en formato ISO 8601 (OpenMeteo) a un formato amigable: "lunes, 27 may"
+ *
+ * Este método usa la API de fechas moderna disponible en Android O (API 26) en adelante.
+ *
+ * @receiver Fecha en formato ISO ("yyyy-MM-dd'T'HH:mm")
+ * @return Fecha legible para el usuario o "Hoy" si hay error
+ */
 fun String.formatOpenMeteoDate(): String {
     return try {
         val parser = SimpleDateFormat("yyyy-MM-dd'T'HH:mm", Locale.getDefault())
@@ -202,6 +222,14 @@ fun String.formatOpenMeteoDate(): String {
 
 }
 
+/**
+ * Alternativa a [formatOpenMeteoDate] para versiones anteriores a Android O.
+ *
+ * Usa SimpleDateFormat para parsear y formatear la fecha manualmente.
+ *
+ * @receiver Fecha en formato ISO ("yyyy-MM-dd'T'HH:mm")
+ * @return Fecha formateada o "Hoy" si falla el formateo
+ */
 fun String.formatOpenMeteoDateLegacy(): String {
     return try {
         val parser = SimpleDateFormat("yyyy-MM-dd'T'HH:mm", Locale.getDefault())
@@ -251,7 +279,15 @@ private fun WeatherDataPoint(icon: String, label: String, value: String) {
     }
 }
 
-// Extensión para grid horizontal
+/**
+ * Crea una fila horizontal para contener elementos composables distribuidos equitativamente.
+ *
+ * Ideal para mostrar varios datos paralelos (como en tarjetas de resumen).
+ *
+ * @param modifier Modificador para personalizar el estilo de la fila
+ * @param horizontalArrangement Distribución horizontal de los elementos
+ * @param content Contenido de la fila, compuesto por múltiples elementos
+ */
 @Composable
 fun GridHorizontal(
     modifier: Modifier = Modifier,
@@ -265,6 +301,13 @@ fun GridHorizontal(
         content = content
     )
 }
+
+/**
+ * Devuelve un ícono representativo basado en el código meteorológico de OpenMeteo.
+ *
+ * @param weatherCode Código del clima según la API de OpenMeteo
+ * @return [ImageVector] que representa visualmente el estado del clima
+ */
 fun getWeatherIconResource(weatherCode: Int?): ImageVector {
     return when (weatherCode) {
         // Cielo claro
@@ -296,7 +339,12 @@ fun getWeatherIconResource(weatherCode: Int?): ImageVector {
     }
 }
 
-// Función para traducir weather_code a texto
+/**
+ * Traduce un código de clima (OpenMeteo) a una descripción textual en español.
+ *
+ * @param code Código numérico del clima
+ * @return Descripción correspondiente o "Desconocido" si no se reconoce
+ */
 private fun translateWeatherCode(code: Int): String {
     return when (code) {
         0 -> "Despejado"
